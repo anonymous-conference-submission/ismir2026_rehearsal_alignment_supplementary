@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>§3 Longitudinal Rehearsal Study — Supplementary Materials</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-home">Practice Makes Imperfect</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="section1.html">§1 Outer-Product HMM</a></li>
+      <li><a href="section2.html">§2 Smith–Waterman</a></li>
+      <li><a href="section3.html" class="active">§3 Longitudinal Study</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+
+  <span class="section-label">Section 3</span>
+  <h1 class="section-heading">Longitudinal Rehearsal Study</h1>
+
+  <p class="section-intro">
+    In this section, we present a potential application of alignment to study how rehearsal
+    structure evolves over time. (This text is essentially the same as Section&nbsp;7 of the
+    paper, reproduced here for the reader's convenience.)
+  </p>
+
+  <div class="figure-wrap zoomable" onclick="openLightbox()">
+    <img src="figs/rach3_longitudinal.png"
+         alt="Heatmap of relative focus on score segments across 298 rehearsals of Rachmaninoff's Third Piano Concerto">
+    <p class="figure-caption">
+      <span class="figure-label">Figure 2.</span>
+      Heatmap of the relative focus placed on different score segments across 298 rehearsals
+      of the first movement of Rachmaninoff's Third Piano Concerto. The x-axis indicates the
+      date of each rehearsal; the y-axis represents score coverage. Heatmap intensity reflects
+      repetition frequency. Red vertical lines mark gaps of seven or more days between sessions.
+      Labels (a)–(d) indicate distinct phases of rehearsal behaviour discussed in the text.
+    </p>
+    <span class="zoom-hint">&#128269; Click to enlarge</span>
+  </div>
+
+  <div id="fig3-lightbox" class="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox()">&#10005; Close</button>
+    <img src="figs/rach3_longitudinal.png"
+         alt="Heatmap of relative focus on score segments across 298 rehearsals">
+    <p class="lightbox-caption">
+      <strong>Figure 2.</strong>
+      Heatmap of the relative focus placed on different score segments across 298 rehearsals
+      of the first movement of Rachmaninoff's Third Piano Concerto.
+    </p>
+  </div>
+
+  <p>
+    The figure shows a heatmap of the relative focus placed on different score segments across
+    298 rehearsals of the first movement of Rachmaninoff's Third Piano Concerto (top plot).
+    The x-axis indicates the date of each rehearsal, while the y-axis represents the portions
+    of the score covered. The heatmap intensity reflects repetition frequency at each score
+    time. Each column corresponds to an individual rehearsal recording (with multiple
+    recordings sometimes occurring on the same day), and gaps of seven or more days between
+    sessions are marked by red vertical lines.
+  </p>
+
+  <p style="margin-top: 1.2rem;">
+    This type of diagram provides a longitudinal view of a pianist's practice behavior,
+    revealing learning strategies and consistency. In (a), early rehearsals show broad
+    exploration of the score, which characterizes initial familiarization. Following a break
+    in rehearsal, (b) indicates a shift toward focused practice on a specific segment, while
+    still revisiting other regions. The underlying motivation for returning to this segment
+    (e.g., technical challenges or expressive refinement) remains ambiguous from the heatmap
+    alone. In (c), the player adopts a more linear progression, with each rehearsal targeting
+    a highly localized section. A similar linear trend appears in (d), though with slightly
+    broader high-activation regions per session, suggesting the slight widening of focused
+    practice to relatively broader regions in the score. However, the later jumps of focused
+    practice to other blocks of the score region complicates this interpretation of linear
+    progression in rehearsal.
+  </p>
+
+  <p style="margin-top: 1.2rem;">
+    These observations highlight the limitations of segment-level analyses, which capture
+    global rehearsal structure but lack fine-grained insights that can provide a better
+    understanding of practice behaviors. Note-level alignment, as proposed in this work,
+    addresses these limitations by enabling more reliable correspondence between performance
+    and score. This facilitates both robust large-scale analysis and finer-grained insights
+    into practice behavior.
+  </p>
+
+</div>
+
+<footer class="site-footer">
+  Supplementary materials for <em>Practice Makes Imperfect: Towards Robust Symbolic
+  Rehearsal-to-Score Alignment</em>, ISMIR 2026.
+</footer>
+
+<script>
+  function openLightbox() {
+    document.getElementById('fig3-lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(e) {
+    if (!e || e.target !== document.querySelector('#fig3-lightbox img')) {
+      document.getElementById('fig3-lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
+
+</body>
+</html>

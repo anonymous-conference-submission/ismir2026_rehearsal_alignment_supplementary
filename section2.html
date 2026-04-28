@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>§2 Smith–Waterman Alignment — Supplementary Materials</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pseudocode@2.4.1/build/pseudocode.min.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-home">Practice Makes Imperfect</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="section1.html">§1 Outer-Product HMM</a></li>
+      <li><a href="section2.html" class="active">§2 Smith–Waterman</a></li>
+      <li><a href="section3.html">§3 Longitudinal Study</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+
+  <span class="section-label">Section 2</span>
+  <h1 class="section-heading">Smith–Waterman Alignment</h1>
+
+  <p class="section-intro">
+    This section provides the detailed pseudocode for the Smith–Waterman alignment method
+    described in Section&nbsp;6 of the paper.
+  </p>
+
+  <div class="notation-block">
+    <strong>Notation.</strong>
+    Let $S = (s_1,\dots,s_N)$ be the sequence of pitch <em>sets</em> at each unique score
+    onset, and let $P = (p_1,\dots,p_M)$ be the sequence of MIDI pitches in the performance.
+    The similarity function $\sigma(p_m, s_n) \in \{0,1\}$ indicates whether pitch $p_m$ is
+    contained in score onset set $s_n$.
+    $\gamma^{+}$ and $\gamma^{-}$ are the match reward and gap penalty, respectively;
+    $G_{\max}$ is the upper bound on the accumulated gain.
+    The direction set $\mathcal{D} = \{(1,1),\,(1,0)\}$ allows diagonal steps (simultaneous
+    score + performance advance) and vertical steps (performance advance only).
+  </div>
+
+  <!-- Algorithm 5 -->
+  <div class="algorithm-wrap">
+    <pre id="alg5">\begin{algorithm}
+\caption{Bounded Smith--Waterman Gain Accumulation}
+\begin{algorithmic}
+\REQUIRE Score pitch-set sequence $S = (s_1,\dots,s_N)$,
+         performance pitch sequence $P = (p_1,\dots,p_M)$,
+         match reward $\gamma^{+}$, gap penalty $\gamma^{-}$, gain bound $G_{\max}$,
+         direction set $\mathcal{D} = \{(1,1),(1,0)\}$
+\ENSURE  Gain matrix $\mathbf{C} \in \mathbb{R}^{M \times N}$,
+         back-tracking matrix $\mathbf{B} \in \{0,1\}^{M \times N}$
+\STATE Initialise $\mathbf{C}[m,n] \leftarrow 0$ and $\mathbf{B}[m,n] \leftarrow 0$ for all $m,n$
+\FOR{$m \leftarrow 1$ \TO $M$}
+  \FOR{$n \leftarrow 1$ \TO $N$}
+    \STATE \COMMENT{Compute the match/mismatch reward for this cell}
+    \IF{$p_m \in s_n$}
+      \STATE $r \leftarrow \gamma^{+}$
+    \ELSE
+      \STATE $r \leftarrow \gamma^{-}$
+    \ENDIF
+    \STATE \COMMENT{Evaluate each allowed direction $d \in \mathcal{D}$}
+    \STATE $\mathrm{best} \leftarrow 0$
+    \STATE $\mathrm{best\_dir} \leftarrow 0$
+    \FOR{$k \leftarrow 0$ \TO $|\mathcal{D}|-1$}
+      \STATE $(dm, dn) \leftarrow \mathcal{D}[k]$
+      \STATE $\mathrm{candidate} \leftarrow \mathbf{C}[m - dm,\; n - dn] + r$
+      \IF{$\mathrm{candidate} > \mathrm{best}$}
+        \STATE $\mathrm{best} \leftarrow \mathrm{candidate}$
+        \STATE $\mathrm{best\_dir} \leftarrow k$
+      \ENDIF
+    \ENDFOR
+    \STATE \COMMENT{Apply the gain bound and store}
+    \STATE $\mathbf{C}[m, n] \leftarrow \min(\mathrm{best},\; G_{\max})$
+    \STATE $\mathbf{B}[m, n] \leftarrow \mathrm{best\_dir}$
+  \ENDFOR
+\ENDFOR
+\RETURN $\mathbf{C}$, $\mathbf{B}$
+\end{algorithmic}
+\end{algorithm}</pre>
+  </div>
+
+  <!-- Algorithm 6 -->
+  <div class="algorithm-wrap">
+    <pre id="alg6">\begin{algorithm}
+\caption{Partial Back-tracking from a Gain Matrix}
+\begin{algorithmic}
+\REQUIRE Back-tracking matrix $\mathbf{B}$,
+         gain matrix $\mathbf{C}$,
+         direction set $\mathcal{D} = \{(1,1),(1,0)\}$,
+         segment start indices $(n_{\text{start}},\, m_{\text{start}})$,
+         segment end indices $(n_{\text{end}},\, m_{\text{end}})$
+\ENSURE  Alignment path $\pi$: array of $(m,n)$ index pairs in forward order
+\STATE $n \leftarrow n_{\text{end}}$
+\STATE $m \leftarrow m_{\text{end}}$
+\STATE $\pi \leftarrow [(m,\, n)]$
+\STATE $c \leftarrow \mathbf{C}[m, n]$
+\STATE $\mathrm{streak} \leftarrow 0$ \COMMENT{consecutive steps with gain $< 1$}
+\WHILE{$n > \max(n_{\text{start}}{-}1,\, 0)$ \AND $m > \max(m_{\text{start}}{-}1,\, 0)$ \AND $c > 0$ \AND $\mathrm{streak} \leq 2$}
+  \STATE \COMMENT{Follow the back-tracking pointer one step}
+  \STATE $(dm, dn) \leftarrow \mathcal{D}[\mathbf{B}[m,n]]$
+  \STATE $m \leftarrow m - dm$
+  \STATE $n \leftarrow n - dn$
+  \STATE $\pi.\mathrm{append}((m,\, n))$
+  \STATE \COMMENT{Update gain and low-gain streak counter}
+  \STATE $c \leftarrow \mathbf{C}[m, n]$
+  \IF{$c < 1$}
+    \STATE $\mathrm{streak} \leftarrow \mathrm{streak} + 1$
+  \ELSE
+    \STATE $\mathrm{streak} \leftarrow 0$
+  \ENDIF
+\ENDWHILE
+\STATE \COMMENT{Remove low-gain tail appended before the loop exited}
+\IF{$\mathrm{streak} > 0$}
+  \STATE $\pi \leftarrow \pi[1 : |\pi| - \mathrm{streak}]$ \COMMENT{trim last $\mathrm{streak}$ entries}
+\ENDIF
+\RETURN $\mathrm{reverse}(\pi)$ \COMMENT{convert to forward (score-start $\to$ end) order}
+\end{algorithmic}
+\end{algorithm}</pre>
+  </div>
+
+  <!-- Algorithm 7 -->
+  <div class="algorithm-wrap">
+    <pre id="alg7">\begin{algorithm}
+\caption{SmithWatermanSSM — Full Alignment Pipeline}
+\begin{algorithmic}
+\REQUIRE Score pitch-set sequence $S = (s_1,\dots,s_N)$,
+         performance pitch sequence $P = (p_1,\dots,p_M)$,
+         hyperparameters: $\gamma^{+}$, $\gamma^{-}$, $G_{\max}$
+\ENSURE  Gain matrix $\mathbf{C}$,
+         back-tracking matrix $\mathbf{B}$,
+         alignment path $\pi$ from score onset $1$ to $N$ and note $1$ to $M$
+\STATE $\mathbf{C},\, \mathbf{B} \leftarrow \text{BoundedSWAccumulate}(S,\, P,\, \gamma^{+},\, \gamma^{-},\, G_{\max})$ \COMMENT{Algorithm 5}
+\STATE $\pi \leftarrow \text{PartialBacktrack}(\mathbf{B},\, \mathbf{C},\; n_{\text{start}}{=}1,\; m_{\text{start}}{=}1,\; n_{\text{end}}{=}N,\; m_{\text{end}}{=}M)$ \COMMENT{Algorithm 6}
+\RETURN $\mathbf{C},\, \mathbf{B},\, \pi$
+\end{algorithmic}
+\end{algorithm}</pre>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  Supplementary materials for <em>Practice Makes Imperfect: Towards Robust Symbolic
+  Rehearsal-to-Score Alignment</em>, ISMIR 2026.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/pseudocode@2.4.1/build/pseudocode.min.js"></script>
+<script>
+  const opts = { lineNumber: true, noEnd: false };
+  ['alg5','alg6','alg7'].forEach(function(id) {
+    try { pseudocode.renderElement(document.getElementById(id), opts); }
+    catch(e) { console.error('pseudocode error in ' + id + ':', e); }
+  });
+  renderMathInElement(document.body, {
+    delimiters: [
+      {left: '$$', right: '$$', display: true},
+      {left: '$',  right: '$',  display: false}
+    ],
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    ignoredClasses: ['ps-root']
+  });
+</script>
+
+</body>
+</html>

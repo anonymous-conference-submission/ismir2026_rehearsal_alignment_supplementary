@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practice Makes Imperfect — Supplementary Materials</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-home">Practice Makes Imperfect</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="section1.html">§1 Outer-Product HMM</a></li>
+      <li><a href="section2.html">§2 Smith–Waterman</a></li>
+      <li><a href="section3.html">§3 Longitudinal Study</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+
+  <div class="landing-header">
+    <h1 class="landing-title">
+      Practice Makes Imperfect: Towards Robust<br>
+      Symbolic Rehearsal-to-Score Alignment
+    </h1>
+    <p class="landing-meta">Supplementary Materials — ISMIR 2026</p>
+  </div>
+
+  <div class="abstract-box">
+    <h2>Abstract</h2>
+    <p class="abstract-text">
+      Symbolic performance-to-score alignment is a core research area in Music Information
+      Retrieval (MIR), supporting applications such as expressive performance analysis and
+      interactive accompaniment systems.
+      Existing methods, however, are largely designed for complete, linear performances
+      that closely follow the score, and their flexibility in rehearsal scenarios remains
+      underexplored.
+      Piano rehearsals are inherently non-linear, involving repetitions, errors, and
+      arbitrary jumps, which contradict the assumptions of conventional alignment
+      approaches, thereby posing challenges to robust alignment.
+      In this paper, we introduce the task of symbolic rehearsal-to-score alignment and
+      investigate the alignment of the Rach3 MIDI Dataset piano rehearsals with their
+      corresponding scores.
+      We analyze the limitations of existing alignment methods in this context and propose
+      and evaluate methodological adaptations of Hidden Markov Models to better handle
+      fragmentary and error-prone practice behavior.
+      Additionally, we release the alignments for the piano rehearsals in the Rach3 MIDI
+      Dataset.
+      By doing so, this work aims to establish a foundation upon which rehearsal-aware MIR
+      systems and data-driven studies of piano rehearsal can be developed.
+    </p>
+  </div>
+
+  <p class="toc-heading">Supplementary Sections</p>
+  <div class="sections-grid">
+    <a href="section1.html" class="section-card">
+      <h3>§1 — Outer-Product HMM</h3>
+      <p>Detailed pseudocode for the OuterHMM: emission table precomputation, Viterbi
+         update step, hesitation detection, and the full online alignment step.</p>
+    </a>
+    <a href="section2.html" class="section-card">
+      <h3>§2 — Smith–Waterman Alignment</h3>
+      <p>Detailed pseudocode for the Smith–Waterman method: bounded gain accumulation,
+         partial back-tracking, and the complete alignment pipeline.</p>
+    </a>
+    <a href="section3.html" class="section-card">
+      <h3>§3 — Longitudinal Rehearsal Study</h3>
+      <p>A heatmap analysis of rehearsal structure across 298 sessions of Rachmaninoff's
+         Third Piano Concerto, illustrating how practice focus evolves over time.</p>
+    </a>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  Supplementary materials for <em>Practice Makes Imperfect: Towards Robust Symbolic
+  Rehearsal-to-Score Alignment</em>, ISMIR 2026.
+</footer>
+
+</body>
+</html>
